@@ -16,6 +16,13 @@ def query(query_str, items_per_page=10, current_page=1):
         end_index = start_index + items_per_page
 
         for i in range(start_index, min(len(results), end_index):
+def query(query_str, topN=10):
+    with ix.searcher(weighting=scoring.Frequency) as searcher:
+        query = QueryParser("description", ix.schema).parse(query_str)
+        results = searcher.search(query, limit=topN)
+        query_results = []
+
+        for i in range(min(len(results), topN):
             d={}
             d['url'] = "https://www.youtube.com/watch?v=%s" % results[i]['id']
             d['title'] = results[i]['title']
@@ -30,4 +37,10 @@ if __name__ == "__main__":
     items_per_page = int(sys.argv[2])
     current_page = int(sys.argv[3])
     query_results, num_query_results = query(query_str, items_per_page=items_per_page, current_page=current_page)
+        return query_results
+
+if __name__ == "__main__":
+    query_str = sys.argv[1]
+    topN = int(sys.argv[2])
+    query_results = query(query_str, topN)
     print(json.dumps(query_results))
